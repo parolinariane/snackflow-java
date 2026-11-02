@@ -1,0 +1,35 @@
+# Arquivos compilados
+*.class
+out/
+bin/
+build/
+target/
+
+# Pacotes
+*.jar
+*.war
+
+# Logs
+*.log
+hs_err_pid*
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# NetBeans
+nbproject/private/
+dist/
+
+# VS Code
+.vscode/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
