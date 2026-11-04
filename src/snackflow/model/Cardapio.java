@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Guarda os produtos oferecidos pela lanchonete.
- * Nesta etapa os produtos são cadastrados diretamente no código (em memória).
- */
 public class Cardapio {
 
     private ArrayList<Produto> produtos;
@@ -41,7 +37,6 @@ public class Cardapio {
         return Collections.unmodifiableList(produtos);
     }
 
-    /** Retorna somente os produtos da categoria informada. */
     public List<Produto> buscarPorCategoria(Categoria categoria) {
         ArrayList<Produto> encontrados = new ArrayList<>();
         for (Produto produto : produtos) {

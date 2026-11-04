@@ -18,16 +18,12 @@ import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.Timer;
 
-/**
- * Tela de abertura (splash screen) exibida enquanto o SnackFlow "carrega".
- * É uma janela sem barra de título, com uma barra de progresso animada.
- * Ao terminar, ela se fecha e executa a ação recebida no construtor (abrir o cardápio).
- */
+
 public class TelaAbertura extends JWindow {
 
     private static final int LARGURA = 520;
     private static final int ALTURA = 340;
-    private static final int INTERVALO_MS = 25;   // tempo entre cada passo da animação
+    private static final int INTERVALO_MS = 25;  
     private static final String[] MENSAGENS = {
         "Acendendo a brasa...",
         "Separando os ingredientes...",
@@ -86,7 +82,6 @@ public class TelaAbertura extends JWindow {
         return conteudo;
     }
 
-    /** Deixa a janela com cantos arredondados, se o sistema operacional permitir. */
     private void arredondarCantos() {
         GraphicsDevice tela = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         if (tela.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT)) {
@@ -94,7 +89,6 @@ public class TelaAbertura extends JWindow {
         }
     }
 
-    /** Mostra a tela e começa a animação da barra de progresso. */
     public void iniciar() {
         setVisible(true);
         timer = new Timer(INTERVALO_MS, e -> avancar());
@@ -105,7 +99,6 @@ public class TelaAbertura extends JWindow {
         progresso++;
         barra.setProgresso(progresso);
 
-        // Troca a mensagem conforme o progresso avança (0-24%, 25-49%, 50-74%, 75-100%)
         int indiceMensagem = Math.min(progresso / 25, MENSAGENS.length - 1);
         lblMensagem.setText(MENSAGENS[indiceMensagem]);
 
@@ -116,7 +109,6 @@ public class TelaAbertura extends JWindow {
         }
     }
 
-    /** Barra de progresso arredondada desenhada nas cores da marca. */
     private static class BarraProgresso extends JComponent {
 
         private int progresso = 0;

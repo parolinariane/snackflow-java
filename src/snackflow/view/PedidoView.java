@@ -25,14 +25,9 @@ import javax.swing.SwingConstants;
 import snackflow.model.ItemPedido;
 import snackflow.model.Pedido;
 
-/**
- * Segunda tela: mostra os itens do pedido, o total e permite remover produtos.
- * Recebe o Pedido criado na tela de cardápio e a própria tela de cardápio,
- * para poder voltar a ela sem perder os dados.
- */
+
 public class PedidoView extends JFrame {
 
-    // Largura fixa das colunas: ilustração, produto (ocupa o resto), quantidade, subtotal e ação
     private static final int[] LARGURAS_COLUNAS = {64, 0, 116, 100, 110};
     private static final int LARGURA_RESUMO = 300;
 
@@ -54,7 +49,6 @@ public class PedidoView extends JFrame {
         setSize(telaCardapio.getSize());
         setLocation(telaCardapio.getLocation());
 
-        // Fechar a janela tem o mesmo efeito de "Voltar ao cardápio"
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -87,7 +81,6 @@ public class PedidoView extends JFrame {
         painelItens.setOpaque(false);
         painelItens.setLayout(new BoxLayout(painelItens, BoxLayout.Y_AXIS));
 
-        // Mantém as linhas no topo, sem esticá-las verticalmente
         JPanel alinhamentoItens = new JPanel(new BorderLayout());
         alinhamentoItens.setBackground(Estilo.FUNDO);
         alinhamentoItens.add(painelItens, BorderLayout.NORTH);
@@ -107,7 +100,6 @@ public class PedidoView extends JFrame {
         return conteudo;
     }
 
-    /** Card lateral com a quantidade de itens, o total e o botão de voltar. */
     private JPanel criarResumo() {
         PainelArredondado resumo = new PainelArredondado(null, Estilo.CARD, null, 26);
         resumo.setLayout(new BoxLayout(resumo, BoxLayout.Y_AXIS));
@@ -161,7 +153,6 @@ public class PedidoView extends JFrame {
         return linha;
     }
 
-    /** Reconstrói a lista de itens e o total a partir do objeto Pedido. */
     private void atualizarTela() {
         painelItens.removeAll();
 
@@ -213,7 +204,6 @@ public class PedidoView extends JFrame {
         linha.setComSombra(true);
         linha.setBorder(BorderFactory.createEmptyBorder(12, 12, 12 + PainelArredondado.TAMANHO_SOMBRA, 18));
 
-        // Nome do produto, preço unitário e observação
         JPanel produto = new JPanel(new GridLayout(3, 1));
         produto.setOpaque(false);
         produto.add(Estilo.criarRotulo(item.getProduto().getNome(), Estilo.FONTE_SUBTITULO.deriveFont(17f),
@@ -222,7 +212,6 @@ public class PedidoView extends JFrame {
                 Estilo.FONTE_NORMAL, Estilo.TEXTO_SECUNDARIO));
         produto.add(criarLinkObservacao(item));
 
-        // A quantidade pode ser alterada aqui mesmo; o total é recalculado pelo Pedido
         SeletorQuantidade seletor = new SeletorQuantidade(1, ItemPedido.QUANTIDADE_MAXIMA);
         seletor.setQuantidade(item.getQuantidade());
         seletor.setAcaoAoAlterar(() -> alterarQuantidade(item, seletor.getQuantidade()));
@@ -245,7 +234,6 @@ public class PedidoView extends JFrame {
         return linha;
     }
 
-    /** Coluna com uma legenda pequena em cima e o valor embaixo. */
     private JPanel criarColunaComLegenda(String legenda, JComponent valor) {
         JPanel valorAlinhado = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         valorAlinhado.setOpaque(false);
@@ -258,7 +246,6 @@ public class PedidoView extends JFrame {
         return coluna;
     }
 
-    /** Posiciona um componente na coluna indicada, mantendo as colunas alinhadas entre as linhas. */
     private void adicionarColuna(JPanel linha, JComponent componente, int coluna) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = coluna;
@@ -268,7 +255,6 @@ public class PedidoView extends JFrame {
 
         int altura = componente.getPreferredSize().height;
         if (LARGURAS_COLUNAS[coluna] == 0) {
-            // A coluna do produto ocupa todo o espaço que sobrar
             gbc.weightx = 1;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             componente.setMinimumSize(new Dimension(0, altura));
@@ -281,7 +267,6 @@ public class PedidoView extends JFrame {
         linha.add(componente, gbc);
     }
 
-    /** Texto clicável que mostra a observação do item ou convida a adicionar uma. */
     private JButton criarLinkObservacao(ItemPedido item) {
         String texto = item.temObservacao() ? "Obs.: " + item.getObservacao() : "+ Adicionar observação";
         JButton link = new JButton(texto);
@@ -347,7 +332,6 @@ public class PedidoView extends JFrame {
         }
     }
 
-    /** Fecha esta tela e reexibe o cardápio, que continua com o mesmo objeto Pedido. */
     private void voltarAoCardapio() {
         telaCardapio.atualizarResumo();
         telaCardapio.setLocation(getLocation());

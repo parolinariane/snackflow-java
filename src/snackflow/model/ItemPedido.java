@@ -1,9 +1,6 @@
 package snackflow.model;
 
-/**
- * Representa um produto escolhido pelo cliente, junto com a quantidade desejada
- * e uma observação opcional (ex.: "sem cebola").
- */
+
 public class ItemPedido {
 
     public static final int QUANTIDADE_MAXIMA = 20;
@@ -45,7 +42,6 @@ public class ItemPedido {
     }
 
     public void setObservacao(String observacao) {
-        // Observação vazia (ou nula) significa "sem observação"
         String texto = (observacao == null) ? "" : observacao.trim();
         if (texto.length() > TAMANHO_MAXIMO_OBSERVACAO) {
             throw new IllegalArgumentException(

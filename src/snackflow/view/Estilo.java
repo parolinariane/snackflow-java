@@ -16,11 +16,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-/**
- * Centraliza a identidade visual do SnackFlow (cores, fontes e formatação),
- * para que todas as telas tenham a mesma aparência.
- * Paleta "brasa": laranja queimado, vermelho, vinho, creme e preto.
- */
 public final class Estilo {
 
     // Paleta principal
@@ -33,7 +28,6 @@ public final class Estilo {
     public static final Color CREME = new Color(0xF7C98A);
     public static final Color PRETO = new Color(0x1A0A0A);
 
-    // Cores de apoio (tons derivados da paleta)
     public static final Color FUNDO = new Color(0xFBE6C4);
     public static final Color CARD = new Color(0xFFF6E8);
     public static final Color BORDA = new Color(0xEBC08A);
@@ -42,9 +36,7 @@ public final class Estilo {
     public static final Color TEXTO_CLARO = new Color(0xFFF6E8);
 
     private static final String FAMILIA_TEXTO = "Segoe UI";
-    // Fonte "retrô" dos títulos; se não existir no computador, usa a próxima da lista
     private static final String FAMILIA_TITULO = escolherFonte("Cooper Black", "Georgia", Font.SERIF);
-    // A Cooper Black já é bem grossa; as outras precisam de negrito
     private static final int ESTILO_TITULO = FAMILIA_TITULO.equals("Cooper Black") ? Font.PLAIN : Font.BOLD;
 
     public static final Font FONTE_LOGO = new Font(FAMILIA_TITULO, ESTILO_TITULO, 30);
@@ -61,7 +53,6 @@ public final class Estilo {
     private Estilo() {
     }
 
-    /** Formata um valor em reais, por exemplo: 15.0 -> "R$ 15,00". */
     public static String formatarPreco(double valor) {
         return FORMATO_REAL.format(valor);
     }
@@ -73,12 +64,6 @@ public final class Estilo {
         return rotulo;
     }
 
-    /**
-     * Cria o topo usado em todas as telas: barra vinho com a chama e o nome SnackFlow,
-     * seguida da faixa decorativa de chamas.
-     *
-     * @param complementoDireita componente exibido à direita da barra (pode ser null)
-     */
     public static JPanel criarCabecalho(JComponent complementoDireita) {
         JPanel barra = new JPanel(new BorderLayout());
         barra.setBackground(VINHO);

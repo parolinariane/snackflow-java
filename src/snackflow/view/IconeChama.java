@@ -9,10 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import javax.swing.JComponent;
 
-/**
- * Desenha a chama, símbolo da identidade visual do SnackFlow.
- * O desenho é feito com curvas (Path2D), sem precisar de arquivos de imagem.
- */
+
 public class IconeChama extends JComponent {
 
     private Color corExterna;
@@ -31,10 +28,6 @@ public class IconeChama extends JComponent {
         g2.dispose();
     }
 
-    /**
-     * Desenha uma chama dentro do retângulo informado.
-     * As coordenadas das curvas vão de 0 a 1 e depois são ampliadas para o tamanho desejado.
-     */
     public static void desenhar(Graphics2D g, double x, double y, double largura, double altura,
                                 Color corExterna, Color corInterna) {
         Path2D externa = new Path2D.Double();

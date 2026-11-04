@@ -23,10 +23,7 @@ import snackflow.model.ItemPedido;
 import snackflow.model.Pedido;
 import snackflow.model.Produto;
 
-/**
- * Primeira tela: exibe o cardápio e permite adicionar produtos ao pedido.
- * O objeto Pedido é recebido no construtor e repassado para a PedidoView.
- */
+
 public class CardapioView extends JFrame {
 
     private Cardapio cardapio;
@@ -63,7 +60,6 @@ public class CardapioView extends JFrame {
     }
 
     private JPanel criarCabecalho() {
-        // O botão do topo também leva à tela do pedido
         botaoCarrinho = BotaoModerno.primario("");
         botaoCarrinho.addActionListener(e -> abrirTelaPedido());
         return Estilo.criarCabecalho(botaoCarrinho);
@@ -83,14 +79,12 @@ public class CardapioView extends JFrame {
         topo.add(Box.createVerticalStrut(16));
         topo.add(criarFiltros());
 
-        // Cria um card para cada produto; o filtro decide quais aparecem na grade
         for (Produto produto : cardapio.getProdutos()) {
             cards.add(new CardProduto(produto, this));
         }
         grade = new JPanel(new GridLayout(0, 4, 18, 18));
         grade.setOpaque(false);
 
-        // Painel que rola só na vertical, mantendo os cards no topo
         PainelRolavel areaCards = new PainelRolavel(new BorderLayout());
         areaCards.setBackground(Estilo.FUNDO);
         areaCards.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 6));
@@ -107,7 +101,6 @@ public class CardapioView extends JFrame {
         return conteudo;
     }
 
-    /** Cria os botões "Todos", "Lanches", "Acompanhamentos"... a partir do enum Categoria. */
     private JPanel criarFiltros() {
         JPanel filtros = new JPanel();
         filtros.setOpaque(false);
@@ -131,7 +124,6 @@ public class CardapioView extends JFrame {
         return filtros;
     }
 
-    /** Mostra só os produtos da categoria escolhida (null = todos) e destaca o botão clicado. */
     private void filtrar(Categoria categoria, BotaoModerno botaoClicado) {
         if (categoria == null) {
             exibirProdutos(cardapio.getProdutos());
@@ -152,11 +144,9 @@ public class CardapioView extends JFrame {
         }
         grade.revalidate();
         grade.repaint();
-        // Volta a rolagem para o topo depois que a grade for redesenhada
         SwingUtilities.invokeLater(() -> rolagem.getVerticalScrollBar().setValue(0));
     }
 
-    /** Barra vinho no rodapé, com o resumo do pedido e o botão "Ver meu pedido". */
     private JPanel criarBarraPedido() {
         JPanel textos = new JPanel();
         textos.setOpaque(false);
@@ -186,7 +176,6 @@ public class CardapioView extends JFrame {
         return rodape;
     }
 
-    /** Envolve o componente num painel que o mantém centralizado e no tamanho original. */
     private JPanel centralizar(JComponent componente) {
         JPanel painel = new JPanel(new GridBagLayout());
         painel.setOpaque(false);
@@ -194,10 +183,6 @@ public class CardapioView extends JFrame {
         return painel;
     }
 
-    /**
-     * Chamado pelos cards. Cria o ItemPedido e o entrega ao Pedido,
-     * que faz as validações. Retorna true se o item foi adicionado.
-     */
     public boolean adicionarAoPedido(Produto produto, int quantidade) {
         try {
             pedido.adicionarItem(new ItemPedido(produto, quantidade));
@@ -211,7 +196,6 @@ public class CardapioView extends JFrame {
         return true;
     }
 
-    /** Atualiza o contador e o total. Também é chamado ao voltar da tela do pedido. */
     public void atualizarResumo() {
         int quantidade = pedido.getQuantidadeTotal();
         String textoItens = quantidade == 1 ? "1 item" : quantidade + " itens";
@@ -230,7 +214,6 @@ public class CardapioView extends JFrame {
         timerMensagem.start();
     }
 
-    /** Abre a segunda tela, passando o MESMO objeto Pedido e esta tela como parâmetros. */
     private void abrirTelaPedido() {
         PedidoView telaPedido = new PedidoView(pedido, this);
         telaPedido.setVisible(true);

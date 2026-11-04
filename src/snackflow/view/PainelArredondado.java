@@ -7,12 +7,9 @@ import java.awt.LayoutManager;
 import java.awt.RenderingHints;
 import javax.swing.JPanel;
 
-/**
- * Painel com cantos arredondados e sombra opcional, usado para criar os "cards" da interface.
- */
+
 public class PainelArredondado extends JPanel {
 
-    // Espaço reservado na parte de baixo do painel para desenhar a sombra
     public static final int TAMANHO_SOMBRA = 5;
 
     private Color corFundo;
@@ -42,7 +39,6 @@ public class PainelArredondado extends JPanel {
         int altura = getHeight() - 1 - (comSombra ? TAMANHO_SOMBRA : 0);
 
         if (comSombra) {
-            // Duas camadas vinho bem transparentes, deslocadas para baixo, simulam uma sombra suave
             g2.setColor(new Color(78, 21, 21, 14));
             g2.fillRoundRect(0, TAMANHO_SOMBRA, largura, altura, arredondamento, arredondamento);
             g2.setColor(new Color(78, 21, 21, 18));

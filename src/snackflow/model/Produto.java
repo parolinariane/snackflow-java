@@ -1,8 +1,5 @@
 package snackflow.model;
 
-/**
- * Representa um produto disponível no cardápio da lanchonete.
- */
 public class Produto {
 
     private int id;

@@ -13,10 +13,7 @@ import java.awt.geom.RoundRectangle2D;
 import javax.swing.JComponent;
 import snackflow.model.Produto;
 
-/**
- * Ilustração de cada produto, desenhada com formas simples (sem arquivos de imagem).
- * Os desenhos usam coordenadas de 0 a 100 e são ampliados para o tamanho do componente.
- */
+
 public class IlustracaoProduto extends JComponent {
 
     private static final Color PAO = new Color(0xE9A23B);
@@ -48,24 +45,20 @@ public class IlustracaoProduto extends JComponent {
         int largura = getWidth();
         int altura = getHeight();
 
-        // Fundo em degradê creme -> laranja claro
         int arredondamento = Math.min(24, Math.min(largura, altura) / 3);
         g2.setPaint(new GradientPaint(0, 0, new Color(0xFDE7C4), 0, altura, new Color(0xF6BE7C)));
         g2.fill(new RoundRectangle2D.Double(0, 0, largura, altura, arredondamento, arredondamento));
 
-        // Nas ilustrações largas, chamas discretas decoram as laterais
         if (largura > altura * 1.6) {
             Color chamaSuave = new Color(217, 102, 43, 45);
             IconeChama.desenhar(g2, largura - altura * 0.55, altura * 0.18, altura * 0.42, altura * 0.62, chamaSuave, null);
             IconeChama.desenhar(g2, altura * 0.12, altura * 0.38, altura * 0.28, altura * 0.42, chamaSuave, null);
         }
 
-        // Centraliza o desenho e converte as coordenadas de 0..100 para o tamanho real
         double tamanho = Math.min(largura, altura) * 0.8;
         g2.translate((largura - tamanho) / 2, (altura - tamanho) / 2);
         g2.scale(tamanho / 100, tamanho / 100);
 
-        // Cada produto tem seu desenho, identificado pelo id cadastrado no Cardapio
         switch (produto.getId()) {
             case 1:
                 desenharHamburguer(g2, false);
@@ -107,7 +100,6 @@ public class IlustracaoProduto extends JComponent {
         g.setColor(Estilo.VINHO);
         g.fill(new RoundRectangle2D.Double(10, 58, 80, 15, 14, 14));
 
-        // Queijo derretendo
         Path2D queijo = new Path2D.Double();
         queijo.moveTo(12, 54);
         queijo.lineTo(88, 54);
@@ -127,7 +119,6 @@ public class IlustracaoProduto extends JComponent {
         g.fill(new RoundRectangle2D.Double(9, 48, 82, 9, 9, 9));
 
         if (comBacon) {
-            // Fatia de bacon ondulada saindo pelas laterais
             Path2D bacon = new Path2D.Double();
             bacon.moveTo(3, 57);
             bacon.curveTo(20, 50, 30, 64, 50, 57);
@@ -186,13 +177,11 @@ public class IlustracaoProduto extends JComponent {
         g.setColor(SOMBRA);
         g.fill(new Ellipse2D.Double(10, 84, 80, 11));
 
-        // Potinho de molho barbecue
         g.setColor(Estilo.VINHO);
         g.fill(new Ellipse2D.Double(64, 70, 28, 16));
         g.setColor(Estilo.VERMELHO);
         g.fill(new Ellipse2D.Double(67, 71, 22, 8));
 
-        // Anéis: um traço grosso dourado com um traço fino mais claro por cima
         double[][] aneis = {{12, 52, 42, 30}, {40, 46, 40, 28}, {24, 22, 40, 28}};
         for (double[] anel : aneis) {
             Ellipse2D forma = new Ellipse2D.Double(anel[0], anel[1], anel[2], anel[3]);
@@ -235,7 +224,6 @@ public class IlustracaoProduto extends JComponent {
         g.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g.draw(copo);
 
-        // Rodela de laranja na borda do copo
         g.setColor(SUCO);
         g.fill(new Ellipse2D.Double(56, 6, 26, 26));
         g.setColor(Estilo.CREME);
@@ -247,7 +235,6 @@ public class IlustracaoProduto extends JComponent {
     }
 
     private void desenharBrownie(Graphics2D g) {
-        // Prato
         g.setColor(Estilo.CARD);
         g.fill(new Ellipse2D.Double(8, 74, 84, 18));
 
@@ -256,7 +243,6 @@ public class IlustracaoProduto extends JComponent {
         g.setColor(CHOCOLATE_CLARO);
         g.fill(new RoundRectangle2D.Double(20, 42, 60, 14, 10, 10));
 
-        // Calda escorrendo pela lateral
         Path2D calda = new Path2D.Double();
         calda.moveTo(22, 44);
         calda.lineTo(78, 44);
@@ -270,7 +256,6 @@ public class IlustracaoProduto extends JComponent {
         g.setColor(Estilo.LARANJA);
         g.fill(calda);
 
-        // Bola de sorvete
         g.setColor(Estilo.CARD);
         g.fill(new Ellipse2D.Double(34, 18, 32, 30));
         g.setColor(new Color(0xF3DDBB));
@@ -294,7 +279,6 @@ public class IlustracaoProduto extends JComponent {
         g.setColor(Estilo.VERMELHO);
         g.fill(copo);
 
-        // Faixa creme no meio do copo, com a chama da marca
         Path2D faixa = new Path2D.Double();
         faixa.moveTo(29.3, 50);
         faixa.lineTo(70.7, 50);
@@ -327,7 +311,6 @@ public class IlustracaoProduto extends JComponent {
         g.setColor(Estilo.VINHO_CLARO);
         g.fill(copo);
 
-        // Reflexo no copo
         g.setColor(new Color(255, 255, 255, 60));
         g.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g.drawLine(36, 50, 40, 84);
@@ -335,13 +318,11 @@ public class IlustracaoProduto extends JComponent {
         g.setColor(Estilo.LARANJA);
         g.fill(new RoundRectangle2D.Double(26, 38, 48, 7, 7, 7));
 
-        // Chantilly
         g.setColor(Estilo.CARD);
         g.fill(new Ellipse2D.Double(24, 26, 26, 18));
         g.fill(new Ellipse2D.Double(37, 17, 26, 22));
         g.fill(new Ellipse2D.Double(50, 26, 26, 18));
 
-        // Cereja
         g.setColor(Estilo.VINHO);
         g.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g.drawLine(51, 10, 56, 2);

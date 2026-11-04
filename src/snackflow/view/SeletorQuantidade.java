@@ -6,11 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-/**
- * Seletor de quantidade no formato "−  1  +".
- * A quantidade nunca sai do intervalo entre o mínimo e o máximo:
- * os botões são desativados ao atingir cada limite.
- */
+
 public class SeletorQuantidade extends JPanel {
 
     private int quantidade;
@@ -50,7 +46,6 @@ public class SeletorQuantidade extends JPanel {
         return quantidade;
     }
 
-    /** Define o que deve acontecer sempre que o usuário clicar em − ou +. */
     public void setAcaoAoAlterar(Runnable acaoAoAlterar) {
         this.acaoAoAlterar = acaoAoAlterar;
     }

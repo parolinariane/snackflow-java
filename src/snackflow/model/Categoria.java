@@ -1,8 +1,5 @@
 package snackflow.model;
 
-/**
- * Categorias do cardápio. Um enum garante que só existam estas opções.
- */
 public enum Categoria {
 
     LANCHES("Lanches"),

@@ -6,11 +6,7 @@ import java.awt.Rectangle;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 
-/**
- * Painel para usar dentro de um JScrollPane que rola apenas na vertical:
- * a largura acompanha a janela, então os cards se ajustam em vez de
- * criar uma barra de rolagem horizontal.
- */
+
 public class PainelRolavel extends JPanel implements Scrollable {
 
     public PainelRolavel(LayoutManager layout) {

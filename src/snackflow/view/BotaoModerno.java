@@ -12,10 +12,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
-/**
- * Botão em formato de pílula, com efeito ao passar o mouse.
- * Use os métodos primario(), contorno(), perigo() e redondo() para criar cada estilo.
- */
+
 public class BotaoModerno extends JButton {
 
     private static final Color FUNDO_DESABILITADO = new Color(0xF1E4D2);
@@ -55,29 +52,24 @@ public class BotaoModerno extends JButton {
         });
     }
 
-    /** Botão laranja, para a ação principal. */
     public static BotaoModerno primario(String texto) {
         return new BotaoModerno(texto, Estilo.LARANJA, Estilo.LARANJA_ESCURO, Estilo.TEXTO_CLARO, null);
     }
 
-    /** Botão claro com contorno laranja, para ações secundárias. */
     public static BotaoModerno contorno(String texto) {
         return new BotaoModerno(texto, Estilo.CARD, new Color(0xFCE9CC), Estilo.LARANJA_ESCURO, Estilo.LARANJA);
     }
 
-    /** Botão vermelho suave, para ações de remoção. */
     public static BotaoModerno perigo(String texto) {
         return new BotaoModerno(texto, new Color(0xFBE1DC), new Color(0xF6C9C1), Estilo.VERMELHO, null);
     }
 
-    /** Botão de filtro (ex.: "Lanches"); use setSelecionado() para destacar o filtro ativo. */
     public static BotaoModerno filtro(String texto) {
         BotaoModerno botao = contorno(texto);
         botao.setBorder(BorderFactory.createEmptyBorder(7, 18, 7, 18));
         return botao;
     }
 
-    /** Pinta o botão como primário (selecionado) ou com contorno (não selecionado). */
     public void setSelecionado(boolean selecionado) {
         if (selecionado) {
             alterarCores(Estilo.LARANJA, Estilo.LARANJA_ESCURO, Estilo.TEXTO_CLARO, null);
@@ -94,7 +86,6 @@ public class BotaoModerno extends JButton {
         repaint();
     }
 
-    /** Botão circular pequeno, usado no seletor de quantidade (− e +). */
     public static BotaoModerno redondo(String simbolo) {
         BotaoModerno botao = new BotaoModerno(simbolo, Estilo.CREME, new Color(0xF2B66E), Estilo.VINHO, null);
         botao.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -115,7 +106,7 @@ public class BotaoModerno extends JButton {
         } else {
             g2.setColor(corFundo);
         }
-        // Arredondamento igual à altura: as pontas ficam totalmente redondas (formato de pílula)
+    
         int arredondamento = getHeight();
         g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arredondamento, arredondamento);
 

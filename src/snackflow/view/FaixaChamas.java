@@ -5,9 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JComponent;
 
-/**
- * Faixa decorativa com chamas repetidas, inspirada nas estampas da identidade visual.
- */
+
 public class FaixaChamas extends JComponent {
 
     private static final int ALTURA = 26;
@@ -23,7 +21,6 @@ public class FaixaChamas extends JComponent {
         g2.setColor(Estilo.CREME);
         g2.fillRect(0, 0, getWidth(), getHeight());
 
-        // Alterna a altura das chamas para dar um efeito de estampa
         for (int i = 0, x = 8; x < getWidth(); i++, x += ESPACO) {
             int deslocamento = (i % 2 == 0) ? 3 : 6;
             IconeChama.desenhar(g2, x, deslocamento, 13, 17, Estilo.LARANJA, null);

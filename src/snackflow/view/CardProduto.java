@@ -9,10 +9,7 @@ import javax.swing.text.DefaultCaret;
 import snackflow.model.ItemPedido;
 import snackflow.model.Produto;
 
-/**
- * Card que exibe um produto do cardápio: ilustração, nome, descrição, preço,
- * seletor de quantidade e o botão "Adicionar ao pedido".
- */
+
 public class CardProduto extends PainelArredondado {
 
     private Produto produto;
@@ -45,7 +42,6 @@ public class CardProduto extends PainelArredondado {
         descricao.setFocusable(false);
         descricao.setOpaque(false);
         descricao.setRows(3);
-        // Impede que o cursor de texto faça a tela rolar sozinha até esta descrição
         ((DefaultCaret) descricao.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 
         JPanel categoriaENome = new JPanel(new BorderLayout(0, 2));
