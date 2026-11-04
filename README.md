@@ -34,39 +34,52 @@ Estilo de hamburgueria artesanal, com tons quentes de "brasa":
 | Preto            | `#1A0A0A` | Reserva para detalhes                      |
 
 - Títulos na fonte **Cooper Black** (se não estiver instalada, o sistema usa Georgia ou uma fonte serifada padrão); textos em Segoe UI.
-- A chama é desenhada em código (`IconeChama`, com `Path2D`), sem arquivos de imagem.
+- A chama e as ilustrações dos produtos são desenhadas em código (`Path2D`, `Graphics2D`), sem arquivos de imagem.
 - Faixa decorativa de chamas abaixo do cabeçalho (`FaixaChamas`).
+- Layout inspirado em apps de delivery: cards com sombra suave, botões em formato de pílula, seletor de quantidade `− 1 +` e barra de pedido fixa no rodapé.
 
 ## Funcionalidades — primeira etapa
 
+**Abertura**
+- Tela de abertura (*splash screen*) com a chama, o nome SnackFlow e uma barra de carregamento animada com mensagens ("Acendendo a brasa...", "Preparando o cardápio..."). Depois de cerca de 2,5 segundos, ela fecha sozinha e abre o cardápio.
+
 **Tela 1 — Cardápio**
 - Cabeçalho com a identidade visual do SnackFlow.
-- Cards com nome, descrição e preço (em reais) de cada produto.
+- Botões de filtro por categoria: **Todos**, **Lanches**, **Acompanhamentos**, **Bebidas** e **Sobremesas**.
+- Cards com ilustração, categoria, nome, descrição e preço (em reais) de cada produto.
 - Seletor de quantidade e botão **Adicionar ao pedido** em cada card.
 - Indicador da quantidade de itens e do valor total do pedido.
-- Botão **Ver meu pedido**.
+- Botão **Ver meu pedido** (no rodapé e no topo da tela).
 
 **Tela 2 — Meu Pedido**
 - Lista dos produtos escolhidos com quantidade, preço unitário e subtotal.
-- Valor total do pedido.
-- Botão **Remover** em cada produto (com confirmação).
+- Alteração da quantidade de cada produto ali mesmo, com `− +`; subtotal e total são atualizados na hora.
+- **Observação** por produto (ex.: "sem cebola"), com até 60 caracteres.
+- Card de resumo com a quantidade de itens e o valor total do pedido.
+- Botão **Remover** em cada produto e botão **Esvaziar pedido** (ambos com confirmação).
 - Mensagem amigável quando o pedido está vazio.
 - Botão **Voltar ao cardápio**, mantendo os itens já escolhidos.
 
 **Validações**
-- Quantidades menores ou iguais a zero, negativas, não numéricas ou acima do limite (20) são recusadas com uma mensagem.
-- Itens ou produtos inválidos (nulos) não podem ser adicionados.
+- Na tela, o seletor `− 1 +` só permite quantidades de 1 a 20: o botão `−` é desativado em 1 e o `+` em 20.
+- No modelo, `ItemPedido` recusa quantidades menores ou iguais a zero e maiores que 20, lançando `IllegalArgumentException`; a tela exibe a mensagem de erro. Isso vale também quando o mesmo produto é adicionado várias vezes e a soma passaria de 20.
+- Observações com mais de 60 caracteres são recusadas; espaços extras no início e no fim são removidos.
+- Itens, produtos ou categorias inválidos (nulos) não são aceitos.
 - Adicionar um produto que já está no pedido soma a quantidade, em vez de duplicar a linha.
-- O total é recalculado sempre que um item é adicionado ou removido.
+- O total é recalculado sempre que um item é adicionado, alterado ou removido.
 
 ### Cardápio inicial
 
-| Produto      | Preço     |
-|--------------|-----------|
-| Hambúrguer   | R$ 15,00  |
-| Batata frita | R$ 12,00  |
-| Refrigerante | R$ 5,00   |
-| Milk-shake   | R$ 14,00  |
+| Produto      | Categoria       | Preço     |
+|--------------|-----------------|-----------|
+| Hambúrguer   | Lanches         | R$ 15,00  |
+| X-Bacon      | Lanches         | R$ 19,00  |
+| Batata frita | Acompanhamentos | R$ 12,00  |
+| Onion rings  | Acompanhamentos | R$ 13,00  |
+| Refrigerante | Bebidas         | R$ 5,00   |
+| Suco natural | Bebidas         | R$ 8,00   |
+| Milk-shake   | Sobremesas      | R$ 14,00  |
+| Brownie      | Sobremesas      | R$ 10,00  |
 
 ## Estrutura de pastas
 
@@ -78,16 +91,22 @@ snackflow-java/
     └── snackflow/
         ├── Main.java                 # Ponto de entrada: cria o Cardapio, o Pedido e abre a primeira tela
         ├── model/                    # Regras do sistema (sem nenhuma dependência de interface)
-        │   ├── Produto.java          # Produto do cardápio (id, nome, descrição, preço)
-        │   ├── ItemPedido.java       # Produto + quantidade, com calcularSubtotal()
-        │   ├── Pedido.java           # Lista de itens, adicionarItem(), removerItem(), calcularTotal()
-        │   └── Cardapio.java         # Lista de produtos cadastrados no código
+        │   ├── Categoria.java        # enum com as categorias do cardápio
+        │   ├── Produto.java          # Produto do cardápio (id, nome, descrição, preço, categoria)
+        │   ├── ItemPedido.java       # Produto + quantidade + observação, com calcularSubtotal()
+        │   ├── Pedido.java           # Lista de itens: adicionarItem(), alterarQuantidade(), removerItem(),
+        │   │                         #   limparPedido(), calcularTotal()
+        │   └── Cardapio.java         # Produtos cadastrados no código e buscarPorCategoria()
         └── view/                     # Telas e componentes visuais
             ├── Estilo.java           # Cores, fontes, formatação em reais e cabeçalho padrão
             ├── IconeChama.java       # Desenho da chama (símbolo da marca)
             ├── FaixaChamas.java      # Faixa decorativa com chamas repetidas
-            ├── PainelArredondado.java# Painel com cantos arredondados (cards)
-            ├── BotaoModerno.java     # Botão arredondado com efeito de hover
+            ├── IlustracaoProduto.java# Desenho de cada um dos 8 produtos
+            ├── PainelArredondado.java# Painel com cantos arredondados e sombra (cards)
+            ├── PainelRolavel.java    # Painel que rola só na vertical (grade de cards)
+            ├── BotaoModerno.java     # Botão em formato de pílula com efeito de hover
+            ├── SeletorQuantidade.java# Seletor de quantidade "− 1 +" (limite de 1 a 20)
+            ├── TelaAbertura.java     # Splash screen com barra de carregamento (JWindow + Timer)
             ├── CardProduto.java      # Card de um produto no cardápio
             ├── CardapioView.java     # Tela 1 — Cardápio
             └── PedidoView.java       # Tela 2 — Meu Pedido
@@ -95,10 +114,10 @@ snackflow-java/
 
 ### Comunicação entre as telas
 
-1. `Main` cria **um único** objeto `Pedido` e o passa para `CardapioView` pelo construtor.
+1. `Main` cria **um único** objeto `Pedido` e abre a `TelaAbertura`, passando como parâmetro a ação a executar quando o carregamento terminar: criar a `CardapioView` com esse `Pedido`.
 2. Cada `CardProduto` recebe o `Produto` e a `CardapioView`; ao clicar em *Adicionar*, chama `telaCardapio.adicionarAoPedido(produto, quantidade)`, que cria um `ItemPedido` e o entrega ao `Pedido`.
 3. Ao clicar em *Ver meu pedido*, a `CardapioView` cria `new PedidoView(pedido, this)`, passando o **mesmo** objeto `Pedido` e a si mesma.
-4. A `PedidoView` lê e altera esse objeto. Ao voltar, chama `telaCardapio.atualizarResumo()` e reexibe a tela anterior — como o objeto é o mesmo, nenhum item é perdido.
+4. A `PedidoView` lê e altera esse objeto (`alterarQuantidade()`, `removerItem()`, `limparPedido()`). Ao voltar, chama `telaCardapio.atualizarResumo()` e reexibe a tela anterior — como o objeto é o mesmo, nenhum item é perdido.
 
 ## Como executar
 

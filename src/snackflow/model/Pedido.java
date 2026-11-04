@@ -33,6 +33,7 @@ public class Pedido {
 
         ItemPedido existente = buscarItemPorProduto(novoItem.getProduto());
         if (existente != null) {
+            // setQuantidade valida o limite máximo antes de alterar o item
             existente.setQuantidade(existente.getQuantidade() + novoItem.getQuantidade());
         } else {
             itens.add(novoItem);
@@ -40,10 +41,25 @@ public class Pedido {
         calcularTotal();
     }
 
+    /** Altera a quantidade de um item que já está no pedido. */
+    public void alterarQuantidade(ItemPedido item, int novaQuantidade) {
+        if (!itens.contains(item)) {
+            throw new IllegalArgumentException("Este item não faz parte do pedido.");
+        }
+        item.setQuantidade(novaQuantidade);
+        calcularTotal();
+    }
+
     public boolean removerItem(ItemPedido item) {
         boolean removido = itens.remove(item);
         calcularTotal();
         return removido;
+    }
+
+    /** Remove todos os itens do pedido. */
+    public void limparPedido() {
+        itens.clear();
+        calcularTotal();
     }
 
     public double calcularTotal() {

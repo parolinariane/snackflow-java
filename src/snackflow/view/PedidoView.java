@@ -1,8 +1,10 @@
 package snackflow.view;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -12,6 +14,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,15 +32,17 @@ import snackflow.model.Pedido;
  */
 public class PedidoView extends JFrame {
 
-    // Largura fixa das colunas Quantidade, Preço unitário, Subtotal e Ação
-    private static final int[] LARGURAS_COLUNAS = {0, 100, 140, 140, 120};
+    // Largura fixa das colunas: ilustração, produto (ocupa o resto), quantidade, subtotal e ação
+    private static final int[] LARGURAS_COLUNAS = {64, 0, 116, 100, 110};
+    private static final int LARGURA_RESUMO = 300;
 
     private Pedido pedido;
     private CardapioView telaCardapio;
 
     private JPanel painelItens;
-    private JLabel lblTotal;
     private JLabel lblQuantidade;
+    private JLabel lblTotal;
+    private BotaoModerno botaoEsvaziar;
 
     public PedidoView(Pedido pedido, CardapioView telaCardapio) {
         this.pedido = pedido;
@@ -45,7 +50,7 @@ public class PedidoView extends JFrame {
 
         setTitle("SnackFlow - Meu Pedido");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        setMinimumSize(new Dimension(820, 640));
+        setMinimumSize(telaCardapio.getMinimumSize());
         setSize(telaCardapio.getSize());
         setLocation(telaCardapio.getLocation());
 
@@ -61,16 +66,15 @@ public class PedidoView extends JFrame {
         raiz.setBackground(Estilo.FUNDO);
         raiz.add(Estilo.criarCabecalho(null), BorderLayout.NORTH);
         raiz.add(criarConteudo(), BorderLayout.CENTER);
-        raiz.add(criarRodape(), BorderLayout.SOUTH);
         setContentPane(raiz);
 
         atualizarTela();
     }
 
     private JPanel criarConteudo() {
-        JPanel conteudo = new JPanel(new BorderLayout(0, 20));
+        JPanel conteudo = new JPanel(new BorderLayout(24, 22));
         conteudo.setBackground(Estilo.FUNDO);
-        conteudo.setBorder(BorderFactory.createEmptyBorder(26, 28, 20, 28));
+        conteudo.setBorder(BorderFactory.createEmptyBorder(26, 28, 24, 28));
 
         JPanel titulos = new JPanel();
         titulos.setOpaque(false);
@@ -84,47 +88,77 @@ public class PedidoView extends JFrame {
         painelItens.setLayout(new BoxLayout(painelItens, BoxLayout.Y_AXIS));
 
         // Mantém as linhas no topo, sem esticá-las verticalmente
-        JPanel alinhamentoTopo = new JPanel(new BorderLayout());
-        alinhamentoTopo.setBackground(Estilo.FUNDO);
-        alinhamentoTopo.add(painelItens, BorderLayout.NORTH);
+        JPanel alinhamentoItens = new JPanel(new BorderLayout());
+        alinhamentoItens.setBackground(Estilo.FUNDO);
+        alinhamentoItens.add(painelItens, BorderLayout.NORTH);
 
-        JScrollPane rolagem = new JScrollPane(alinhamentoTopo);
+        JScrollPane rolagem = new JScrollPane(alinhamentoItens);
         rolagem.setBorder(null);
         rolagem.getViewport().setBackground(Estilo.FUNDO);
         rolagem.getVerticalScrollBar().setUnitIncrement(16);
 
+        JPanel alinhamentoResumo = new JPanel(new BorderLayout());
+        alinhamentoResumo.setOpaque(false);
+        alinhamentoResumo.add(criarResumo(), BorderLayout.NORTH);
+
         conteudo.add(titulos, BorderLayout.NORTH);
         conteudo.add(rolagem, BorderLayout.CENTER);
+        conteudo.add(alinhamentoResumo, BorderLayout.EAST);
         return conteudo;
     }
 
-    private JPanel criarRodape() {
-        JPanel rodape = new JPanel(new BorderLayout());
-        rodape.setBackground(Estilo.VINHO);
-        rodape.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(4, 0, 0, 0, Estilo.LARANJA),
-                BorderFactory.createEmptyBorder(14, 28, 14, 28)));
+    /** Card lateral com a quantidade de itens, o total e o botão de voltar. */
+    private JPanel criarResumo() {
+        PainelArredondado resumo = new PainelArredondado(null, Estilo.CARD, null, 26);
+        resumo.setLayout(new BoxLayout(resumo, BoxLayout.Y_AXIS));
+        resumo.setComSombra(true);
+        resumo.setBorder(BorderFactory.createEmptyBorder(22, 22, 22 + PainelArredondado.TAMANHO_SOMBRA, 22));
 
-        BotaoModerno botaoVoltar = BotaoModerno.secundario("Voltar ao cardápio");
+        lblQuantidade = Estilo.criarRotulo("", Estilo.FONTE_NEGRITO, Estilo.TEXTO);
+        lblTotal = Estilo.criarRotulo("", Estilo.FONTE_SUBTITULO.deriveFont(26f), Estilo.VERMELHO);
+
+        JPanel divisor = new JPanel();
+        divisor.setBackground(Estilo.BORDA);
+        divisor.setPreferredSize(new Dimension(0, 1));
+        divisor.setMinimumSize(new Dimension(0, 1));
+        divisor.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        divisor.setAlignmentX(LEFT_ALIGNMENT);
+
+        BotaoModerno botaoVoltar = BotaoModerno.contorno("Voltar ao cardápio");
         botaoVoltar.addActionListener(e -> voltarAoCardapio());
+        botaoVoltar.setAlignmentX(LEFT_ALIGNMENT);
+        botaoVoltar.setMaximumSize(new Dimension(Integer.MAX_VALUE, botaoVoltar.getPreferredSize().height));
 
-        JPanel totais = new JPanel();
-        totais.setOpaque(false);
-        totais.setLayout(new BoxLayout(totais, BoxLayout.Y_AXIS));
-        lblQuantidade = Estilo.criarRotulo("", Estilo.FONTE_PEQUENA, Estilo.TEXTO_CLARO);
-        lblTotal = Estilo.criarRotulo("", Estilo.FONTE_SUBTITULO.deriveFont(24f), Estilo.CREME);
-        lblQuantidade.setAlignmentX(RIGHT_ALIGNMENT);
-        lblTotal.setAlignmentX(RIGHT_ALIGNMENT);
-        totais.add(lblQuantidade);
-        totais.add(lblTotal);
+        botaoEsvaziar = BotaoModerno.perigo("Esvaziar pedido");
+        botaoEsvaziar.addActionListener(e -> esvaziarPedido());
+        botaoEsvaziar.setAlignmentX(LEFT_ALIGNMENT);
+        botaoEsvaziar.setMaximumSize(new Dimension(Integer.MAX_VALUE, botaoEsvaziar.getPreferredSize().height));
 
-        JPanel alinhamentoBotao = new JPanel(new GridBagLayout());
-        alinhamentoBotao.setOpaque(false);
-        alinhamentoBotao.add(botaoVoltar);
+        resumo.add(Estilo.criarRotulo("Resumo do pedido", Estilo.FONTE_SUBTITULO, Estilo.VINHO));
+        resumo.add(Box.createVerticalStrut(18));
+        resumo.add(criarLinhaResumo(Estilo.criarRotulo("Itens", Estilo.FONTE_NORMAL, Estilo.TEXTO_SECUNDARIO),
+                lblQuantidade));
+        resumo.add(Box.createVerticalStrut(16));
+        resumo.add(divisor);
+        resumo.add(Box.createVerticalStrut(16));
+        resumo.add(criarLinhaResumo(Estilo.criarRotulo("Total", Estilo.FONTE_SUBTITULO, Estilo.VINHO), lblTotal));
+        resumo.add(Box.createVerticalStrut(24));
+        resumo.add(botaoVoltar);
+        resumo.add(Box.createVerticalStrut(10));
+        resumo.add(botaoEsvaziar);
 
-        rodape.add(alinhamentoBotao, BorderLayout.WEST);
-        rodape.add(totais, BorderLayout.EAST);
-        return rodape;
+        resumo.setPreferredSize(new Dimension(LARGURA_RESUMO, resumo.getPreferredSize().height));
+        return resumo;
+    }
+
+    private JPanel criarLinhaResumo(JLabel rotulo, JLabel valor) {
+        JPanel linha = new JPanel(new BorderLayout());
+        linha.setOpaque(false);
+        linha.add(rotulo, BorderLayout.WEST);
+        linha.add(valor, BorderLayout.EAST);
+        linha.setAlignmentX(LEFT_ALIGNMENT);
+        linha.setMaximumSize(new Dimension(Integer.MAX_VALUE, linha.getPreferredSize().height));
+        return linha;
     }
 
     /** Reconstrói a lista de itens e o total a partir do objeto Pedido. */
@@ -134,29 +168,29 @@ public class PedidoView extends JFrame {
         if (pedido.estaVazio()) {
             painelItens.add(criarMensagemPedidoVazio());
         } else {
-            painelItens.add(criarLinhaCabecalho());
             for (ItemPedido item : pedido.getItens()) {
-                painelItens.add(Box.createVerticalStrut(10));
                 painelItens.add(criarLinhaItem(item));
+                painelItens.add(Box.createVerticalStrut(10));
             }
         }
 
-        int quantidade = pedido.getQuantidadeTotal();
-        lblQuantidade.setText((quantidade == 1 ? "1 item" : quantidade + " itens") + " no pedido");
-        lblTotal.setText("Total: " + Estilo.formatarPreco(pedido.calcularTotal()));
+        lblQuantidade.setText(String.valueOf(pedido.getQuantidadeTotal()));
+        lblTotal.setText(Estilo.formatarPreco(pedido.calcularTotal()));
+        botaoEsvaziar.setEnabled(!pedido.estaVazio());
 
         painelItens.revalidate();
         painelItens.repaint();
     }
 
     private JPanel criarMensagemPedidoVazio() {
-        PainelArredondado cartao = new PainelArredondado(new GridBagLayout(), Estilo.CARD, Estilo.BORDA, 24);
-        cartao.setBorder(BorderFactory.createEmptyBorder(40, 20, 40, 20));
+        PainelArredondado cartao = new PainelArredondado(new GridBagLayout(), Estilo.CARD, null, 26);
+        cartao.setComSombra(true);
+        cartao.setBorder(BorderFactory.createEmptyBorder(48, 20, 48 + PainelArredondado.TAMANHO_SOMBRA, 20));
 
         JPanel textos = new JPanel();
         textos.setOpaque(false);
         textos.setLayout(new BoxLayout(textos, BoxLayout.Y_AXIS));
-        IconeChama chama = new IconeChama(44, 56, Estilo.BORDA, null);
+        IconeChama chama = new IconeChama(48, 60, Estilo.BORDA, null);
         chama.setMaximumSize(chama.getPreferredSize());
         JLabel titulo = Estilo.criarRotulo("Seu pedido está vazio", Estilo.FONTE_SUBTITULO, Estilo.VINHO);
         JLabel dica = Estilo.criarRotulo("Volte ao cardápio e adicione seus lanches favoritos.",
@@ -165,7 +199,7 @@ public class PedidoView extends JFrame {
         titulo.setAlignmentX(CENTER_ALIGNMENT);
         dica.setAlignmentX(CENTER_ALIGNMENT);
         textos.add(chama);
-        textos.add(Box.createVerticalStrut(12));
+        textos.add(Box.createVerticalStrut(14));
         textos.add(titulo);
         textos.add(Box.createVerticalStrut(6));
         textos.add(dica);
@@ -174,35 +208,28 @@ public class PedidoView extends JFrame {
         return cartao;
     }
 
-    private JPanel criarLinhaCabecalho() {
-        JPanel linha = new JPanel(new GridBagLayout());
-        linha.setOpaque(false);
-        linha.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
-
-        String[] titulos = {"Produto", "Quantidade", "Preço unitário", "Subtotal", ""};
-        for (int i = 0; i < titulos.length; i++) {
-            JLabel rotulo = Estilo.criarRotulo(titulos[i], Estilo.FONTE_PEQUENA, Estilo.TEXTO_SECUNDARIO);
-            adicionarColuna(linha, rotulo, i);
-        }
-        return linha;
-    }
-
     private JPanel criarLinhaItem(ItemPedido item) {
-        PainelArredondado linha = new PainelArredondado(new GridBagLayout(), Estilo.CARD, Estilo.BORDA, 20);
-        linha.setBorder(BorderFactory.createEmptyBorder(14, 20, 14, 20));
+        PainelArredondado linha = new PainelArredondado(new GridBagLayout(), Estilo.CARD, null, 22);
+        linha.setComSombra(true);
+        linha.setBorder(BorderFactory.createEmptyBorder(12, 12, 12 + PainelArredondado.TAMANHO_SOMBRA, 18));
 
-        // GridLayout limita a largura dos textos; descrições longas terminam com "..."
-        JPanel produto = new JPanel(new GridLayout(2, 1));
+        // Nome do produto, preço unitário e observação
+        JPanel produto = new JPanel(new GridLayout(3, 1));
         produto.setOpaque(false);
-        produto.add(Estilo.criarRotulo(item.getProduto().getNome(), Estilo.FONTE_NEGRITO, Estilo.VINHO));
-        produto.add(Estilo.criarRotulo(item.getProduto().getDescricao(), Estilo.FONTE_PEQUENA,
-                Estilo.TEXTO_SECUNDARIO));
+        produto.add(Estilo.criarRotulo(item.getProduto().getNome(), Estilo.FONTE_SUBTITULO.deriveFont(17f),
+                Estilo.VINHO));
+        produto.add(Estilo.criarRotulo(Estilo.formatarPreco(item.getProduto().getPreco()) + " cada",
+                Estilo.FONTE_NORMAL, Estilo.TEXTO_SECUNDARIO));
+        produto.add(criarLinkObservacao(item));
 
-        JLabel quantidade = Estilo.criarRotulo(item.getQuantidade() + "x", Estilo.FONTE_NEGRITO, Estilo.TEXTO);
-        JLabel precoUnitario = Estilo.criarRotulo(Estilo.formatarPreco(item.getProduto().getPreco()),
-                Estilo.FONTE_NORMAL, Estilo.TEXTO);
-        JLabel subtotal = Estilo.criarRotulo(Estilo.formatarPreco(item.calcularSubtotal()),
-                Estilo.FONTE_NEGRITO, Estilo.VERMELHO);
+        // A quantidade pode ser alterada aqui mesmo; o total é recalculado pelo Pedido
+        SeletorQuantidade seletor = new SeletorQuantidade(1, ItemPedido.QUANTIDADE_MAXIMA);
+        seletor.setQuantidade(item.getQuantidade());
+        seletor.setAcaoAoAlterar(() -> alterarQuantidade(item, seletor.getQuantidade()));
+        JPanel quantidade = criarColunaComLegenda("Quantidade", seletor);
+
+        JPanel subtotal = criarColunaComLegenda("Subtotal", Estilo.criarRotulo(
+                Estilo.formatarPreco(item.calcularSubtotal()), Estilo.FONTE_NEGRITO.deriveFont(16f), Estilo.VERMELHO));
 
         BotaoModerno botaoRemover = BotaoModerno.perigo("Remover");
         botaoRemover.addActionListener(e -> removerItem(item));
@@ -210,12 +237,25 @@ public class PedidoView extends JFrame {
         areaBotao.setOpaque(false);
         areaBotao.add(botaoRemover);
 
-        adicionarColuna(linha, produto, 0);
-        adicionarColuna(linha, quantidade, 1);
-        adicionarColuna(linha, precoUnitario, 2);
+        adicionarColuna(linha, new IlustracaoProduto(item.getProduto(), 64, 64), 0);
+        adicionarColuna(linha, produto, 1);
+        adicionarColuna(linha, quantidade, 2);
         adicionarColuna(linha, subtotal, 3);
         adicionarColuna(linha, areaBotao, 4);
         return linha;
+    }
+
+    /** Coluna com uma legenda pequena em cima e o valor embaixo. */
+    private JPanel criarColunaComLegenda(String legenda, JComponent valor) {
+        JPanel valorAlinhado = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        valorAlinhado.setOpaque(false);
+        valorAlinhado.add(valor);
+
+        JPanel coluna = new JPanel(new BorderLayout(0, 4));
+        coluna.setOpaque(false);
+        coluna.add(Estilo.criarRotulo(legenda, Estilo.FONTE_PEQUENA, Estilo.TEXTO_SECUNDARIO), BorderLayout.NORTH);
+        coluna.add(valorAlinhado, BorderLayout.CENTER);
+        return coluna;
     }
 
     /** Posiciona um componente na coluna indicada, mantendo as colunas alinhadas entre as linhas. */
@@ -224,23 +264,76 @@ public class PedidoView extends JFrame {
         gbc.gridx = coluna;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, coluna == 0 ? 0 : 10, 0, 0);
+        gbc.insets = new Insets(0, coluna == 0 ? 0 : 16, 0, 0);
 
-        if (coluna == 0) {
-            // A coluna "Produto" ocupa todo o espaço que sobrar
+        int altura = componente.getPreferredSize().height;
+        if (LARGURAS_COLUNAS[coluna] == 0) {
+            // A coluna do produto ocupa todo o espaço que sobrar
             gbc.weightx = 1;
             gbc.fill = GridBagConstraints.HORIZONTAL;
-            componente.setMinimumSize(new Dimension(0, componente.getPreferredSize().height));
-            componente.setPreferredSize(new Dimension(0, componente.getPreferredSize().height));
+            componente.setMinimumSize(new Dimension(0, altura));
+            componente.setPreferredSize(new Dimension(0, altura));
         } else {
-            Dimension tamanho = new Dimension(LARGURAS_COLUNAS[coluna], componente.getPreferredSize().height);
+            Dimension tamanho = new Dimension(LARGURAS_COLUNAS[coluna], altura);
             componente.setPreferredSize(tamanho);
             componente.setMinimumSize(tamanho);
         }
-        if (componente instanceof JLabel && coluna > 0 && coluna < 4) {
-            ((JLabel) componente).setHorizontalAlignment(SwingConstants.LEFT);
-        }
         linha.add(componente, gbc);
+    }
+
+    /** Texto clicável que mostra a observação do item ou convida a adicionar uma. */
+    private JButton criarLinkObservacao(ItemPedido item) {
+        String texto = item.temObservacao() ? "Obs.: " + item.getObservacao() : "+ Adicionar observação";
+        JButton link = new JButton(texto);
+        link.setFont(Estilo.FONTE_PEQUENA.deriveFont(Font.BOLD));
+        link.setForeground(Estilo.LARANJA_ESCURO);
+        link.setContentAreaFilled(false);
+        link.setBorderPainted(false);
+        link.setFocusPainted(false);
+        link.setBorder(BorderFactory.createEmptyBorder());
+        link.setHorizontalAlignment(SwingConstants.LEFT);
+        link.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        link.setToolTipText("Clique para escrever ou editar a observação");
+        link.addActionListener(e -> editarObservacao(item));
+        return link;
+    }
+
+    private void editarObservacao(ItemPedido item) {
+        Object resposta = JOptionPane.showInputDialog(this,
+                "Observação para " + item.getProduto().getNome()
+                        + " (até " + ItemPedido.TAMANHO_MAXIMO_OBSERVACAO + " caracteres):",
+                "Observação", JOptionPane.PLAIN_MESSAGE, null, null, item.getObservacao());
+
+        if (resposta == null) {
+            return; // o usuário cancelou
+        }
+        try {
+            item.setObservacao(resposta.toString());
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Observação inválida", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        atualizarTela();
+    }
+
+    private void alterarQuantidade(ItemPedido item, int novaQuantidade) {
+        try {
+            pedido.alterarQuantidade(item, novaQuantidade);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Quantidade inválida", JOptionPane.WARNING_MESSAGE);
+        }
+        atualizarTela();
+    }
+
+    private void esvaziarPedido() {
+        int resposta = JOptionPane.showConfirmDialog(this,
+                "Deseja remover todos os produtos do pedido?",
+                "Esvaziar pedido", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (resposta == JOptionPane.YES_OPTION) {
+            pedido.limparPedido();
+            atualizarTela();
+        }
     }
 
     private void removerItem(ItemPedido item) {

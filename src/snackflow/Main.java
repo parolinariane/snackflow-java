@@ -5,6 +5,7 @@ import javax.swing.UIManager;
 import snackflow.model.Cardapio;
 import snackflow.model.Pedido;
 import snackflow.view.CardapioView;
+import snackflow.view.TelaAbertura;
 
 
 public class Main {
@@ -21,8 +22,12 @@ public class Main {
             Cardapio cardapio = new Cardapio();
             Pedido pedido = new Pedido();
 
-            CardapioView telaCardapio = new CardapioView(cardapio, pedido);
-            telaCardapio.setVisible(true);
+            // A tela de abertura recebe, como parâmetro, o que fazer quando terminar: abrir o cardápio
+            TelaAbertura abertura = new TelaAbertura(() -> {
+                CardapioView telaCardapio = new CardapioView(cardapio, pedido);
+                telaCardapio.setVisible(true);
+            });
+            abertura.iniciar();
         });
     }
 }
